@@ -8,20 +8,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-
 
 public class Lab {
-
     public static void main(String[] args) {
+        new Lab().execute();
+    }
+
+    public void execute(){
         HttpURLConnection connection = null;
         try {
-            Lab lab = new Lab();
-            connection = (HttpURLConnection) new URL(lab.readURL()).openConnection();
+            connection = (HttpURLConnection) new URL(readURL()).openConnection();
 
-            lab.setRequestParams(connection, lab);
+            setRequestParams(connection);
 
             PrintUtils.printRequestHeaders(connection);
 
@@ -29,7 +27,7 @@ public class Lab {
 
             PrintUtils.printResponseHeaders(connection);
 
-            lab.printResponseBody(connection);
+            printResponseBody(connection);
 
             connection.connect();
         } catch (IOException e) {
@@ -42,8 +40,8 @@ public class Lab {
         }
     }
 
-    private void setRequestParams(HttpURLConnection connection, Lab lab) throws ProtocolException {
-        connection.setRequestMethod(lab.readMethod());
+    private void setRequestParams(HttpURLConnection connection) throws ProtocolException {
+        connection.setRequestMethod(readMethod());
         connection.setUseCaches(false);
         connection.setConnectTimeout(250);
         connection.setReadTimeout(250);
@@ -59,7 +57,8 @@ public class Lab {
         String method = "";
         do {
             try {
-                String parsedMethod = ReaderUtils.readMethod();
+                System.out.println("Введите метод: ");
+                String parsedMethod = ReaderUtils.read();
                 Method.valueOf(parsedMethod);
                 valid = true;
                 method = parsedMethod;
@@ -76,7 +75,8 @@ public class Lab {
         boolean valid = false;
         String URL = "";
         do {
-            String parsedURL = ReaderUtils.readURL();
+            System.out.println("Введите url: ");
+            String parsedURL = ReaderUtils.read();
             if (urlValidator.isValid(parsedURL)){
                 valid = true;
                 URL = parsedURL;
@@ -100,52 +100,12 @@ public class Lab {
             System.out.println(stringBuilder);
         }
     }
-
-
-}
-
-final class ReaderUtils {
-    private ReaderUtils(){
-        throw new UnsupportedOperationException();
-    }
-
-    public static String readMethod(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите метод: ");
-        return scanner.next();
-    }
-
-    public static String readURL(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите url: ");
-        return scanner.next();
-    }
 }
 
 
-final class PrintUtils {
-    private PrintUtils(){
-        throw new UnsupportedOperationException();
-    }
 
-    public static void printRequestHeaders(HttpURLConnection connection){
-        System.out.println("---REQUEST---");
-        print(connection.getRequestProperties());
-    }
 
-    public static void printResponseHeaders(HttpURLConnection connection) throws IOException {
-        System.out.println("---RESPONSE---");
-        System.out.println("Status code: " + connection.getResponseCode() + " : " + connection.getResponseMessage());
-        print(connection.getHeaderFields());
-    }
 
-    private static void print(Map<String, List<String>> map) {
-        for(String k : map.keySet()) {
-            System.out.println( k + " : " + map.get(k).toString());
-        }
-    }
-}
 
-enum Method {
-    GET, HEAD, POST
-}
+
+
