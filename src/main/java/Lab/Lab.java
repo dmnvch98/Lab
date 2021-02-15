@@ -14,7 +14,7 @@ public class Lab {
         new Lab().execute();
     }
 
-    public void execute(){
+    private void execute(){
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) new URL(readURL()).openConnection();
